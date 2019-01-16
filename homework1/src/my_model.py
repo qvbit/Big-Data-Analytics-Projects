@@ -86,8 +86,9 @@ def my_classifier_predictions(X_train,Y_train,X_test):
 
 	pipe.fit(X_train, Y_train)
 
-	Y_pred = pipe.predict(X_test)
-
+	Y_pred = pipe.predict_proba(X_test)
+	Y_pred = [y[1] for y in Y_pred]
+ 
 	return Y_pred
 
 

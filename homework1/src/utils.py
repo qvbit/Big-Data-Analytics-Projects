@@ -26,7 +26,7 @@ def get_data_from_svmlight(svmlight_file):
 def generate_submission(svmlight_with_ids_file, Y_pred):
     f = open(svmlight_with_ids_file)
     lines = f.readlines()
-    target = open('../deliverables/my_predictions.csv', 'w')
+    target = open('../deliverables/my_predictions_kaggle.csv', 'w')
     target.write("%s,%s\n" %("patient_id","label"));
     for i in range(len(lines)):
         target.write("%s,%s\n" %(str(lines[i].split()[0]),str(Y_pred[i])));
