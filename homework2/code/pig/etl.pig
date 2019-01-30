@@ -16,13 +16,13 @@
 REGISTER utils.py USING jython AS utils;
 
 -- load events file
-events = LOAD '../../data/events.csv' USING PigStorage(',') AS (patientid:int, eventid:chararray, eventdesc:chararray, timestamp:chararray, value:float);
+events = LOAD '../sample_test/sample_events.csv' USING PigStorage(',') AS (patientid:int, eventid:chararray, eventdesc:chararray, timestamp:chararray, value:float);
 
 -- select required columns from events
 events = FOREACH events GENERATE patientid, eventid, ToDate(timestamp, 'yyyy-MM-dd') AS etimestamp, value;
 
 -- load mortality file
-mortality = LOAD '../../data/mortality.csv' USING PigStorage(',') as (patientid:int, timestamp:chararray, label:int);
+mortality = LOAD '../sample_test/sample_mortality.csv' USING PigStorage(',') as (patientid:int, timestamp:chararray, label:int);
 
 mortality = FOREACH mortality GENERATE patientid, ToDate(timestamp, 'yyyy-MM-dd') AS mtimestamp, label;
 
@@ -31,9 +31,11 @@ mortality = FOREACH mortality GENERATE patientid, ToDate(timestamp, 'yyyy-MM-dd'
 -- ***************************************************************************
 -- Compute the index dates for dead and alive patients
 -- ***************************************************************************
-eventswithmort = -- perform join of events and mortality by patientid;
+-- perform join of events and mortality by patientid;
+eventswithmort = JOIN events BY patientid LEFT OUTER, mortality by patientid;
 
-deadevents = -- detect the events of dead patients and create it of the form (patientid, eventid, value, label, time_difference) where time_difference is the days between index date and each event timestamp
+-- detect the events of dead patients and create it of the form (patientid, eventid, value, label, time_difference) where time_difference is the days between index date and each event timestamp
+deadfilt = FILTER eventswithmort BY (mortality::label == 1);
 
 aliveevents = -- detect the events of alive patients and create it of the form (patientid, eventid, value, label, time_difference) where time_difference is the days between index date and each event timestamp
 
