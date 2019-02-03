@@ -21,6 +21,10 @@ for line in sys.stdin:
     #       you get started (and to have a 'runnable' program). 
     #       You may need to change some or all of the lines below.
     #       Follow the pseudocode given in the PDF.
-    key = random.randint(0, options.n_model - 1)
-    value = line.strip()
-    print("%d\t%s" % (key, value))
+    M = options.n_model
+    for i in range(1, M+1):
+        m = random.random() # number between 0 and 1
+        if m < options.ratio:
+            value = line.strip() # Note that value here is one training example.
+            if value:
+                print("%d\t%s" % (i, value))

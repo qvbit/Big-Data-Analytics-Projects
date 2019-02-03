@@ -13,18 +13,27 @@ class LogisticRegressionSGD:
         """
         self.eta = eta
         self.weight = [0.0] * n_feature
+        self.mu = mu
 
     def fit(self, X, y):
         """
         Update model using a pair of training sample
         """
-        pass
+
+        #  X is of the form feautre_id:feature value. Use feature_id to index weight matrix.
+        sig = self.predict_prob(X)
+
+        # SGD update step.
+        for f, v in X:
+            self.weight[f] = self.weight[f] - self.eta*( (sig - y)*v - self.mu*self.weight[f]**2 )
+        
+
 
     def predict(self, X):
         """
         Predict 0 or 1 given X and the current weights in the model
         """
-        return 1 if predict_prob(X) > 0.5 else 0
+        return 1 if self.predict_prob(X) > 0.5 else 0
 
     def predict_prob(self, X):
         """
