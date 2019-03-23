@@ -50,8 +50,8 @@ class MyCNN(nn.Module):
 class MyRNN(nn.Module):
     def __init__(self):
         super(MyRNN, self).__init__()
-        self.rnn = nn.GRU(input_size=1, hidden_size=32, num_layers=2, batch_first=True, dropout=0.7, bidirectional=True) #(batch, seq, features)
-        self.fc = nn.Linear(in_features=32, out_features=5)
+        self.rnn = nn.GRU(input_size=1, hidden_size=32, num_layers=2, batch_first=True, dropout=0.5, bidirectional=True) #(batch, seq, features)
+        self.fc = nn.Linear(in_features=64, out_features=5)
 
     def forward(self, x):
         x, _ = self.rnn(x)
@@ -65,7 +65,7 @@ class MyRNN(nn.Module):
 #         # You may use the input argument 'dim_input', which is basically the number of features
 #         self.fc_size = 32
 #         self.rnn_size = 16
-#         self.num_layers = 2
+#         self.num_layers = 3
 #         self.bidirectional = False
 #         self.dropout = 0.5
 
@@ -105,9 +105,9 @@ class MyVariableRNN(nn.Module):
     def __init__(self, dim_input):
         super(MyVariableRNN, self).__init__()
         # You may use the input argument 'dim_input', which is basically the number of features
-        self.fc_size = 64
-        self.rnn_size = 16
-        self.num_layers = 2
+        self.fc_size = 32
+        self.rnn_size = 64
+        self.num_layers = 3
         self.bidirectional = False
         self.dropout = 0.5
 
@@ -115,7 +115,7 @@ class MyVariableRNN(nn.Module):
         torch.nn.init.xavier_uniform(self.fc1.weight)
         self.drop = nn.Dropout(p = 0.5)
 
-        self.gru = nn.GRU(input_size=self.fc_size, hidden_size=self.rnn_size, num_layers=self.num_layers, batch_first=True,
+        self.gru = nn.LSTM(input_size=self.fc_size, hidden_size=self.rnn_size, num_layers=self.num_layers, batch_first=True,
             bidirectional=self.bidirectional, dropout=self.dropout) # change input size
     
         
@@ -131,10 +131,10 @@ class MyVariableRNN(nn.Module):
         seqs, lengths = input_tuple
         
         batch_size = len(seqs)
-        seqs = F.rrelu(self.drop(self.fc1(seqs)))
+        seqs = F.relu(self.drop(self.fc1(seqs)))
 
         seqs = pack_padded_sequence(seqs, lengths, batch_first=True)
-        _, seqs = self.gru(seqs)
+        _, (seqs,_) = self.gru(seqs)
         seqs = seqs[-1]
 
         seqs = seqs.view(batch_size, -1)

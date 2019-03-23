@@ -59,8 +59,11 @@ def calculate_num_features(seqs):
                     yield sub
             else:
                 yield el
+
                 
-    return len(set(flatten(seqs)))
+    # return len(set(flatten(seqs)))
+
+    return 902 # Note this needs to always be 902 (the number of features in the train set) regardless of if we're looking at val set. 
 
 
 class VisitSequenceWithLabelDataset(Dataset):
